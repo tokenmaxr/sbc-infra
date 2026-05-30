@@ -42,31 +42,6 @@ services:
       - "com.centurylinklabs.watchtower.enable=true"
     networks:
       - infra
-      
-  netdata:
-    image: netdata/netdata:latest
-    container_name: netdata
-    pid: host
-    network_mode: host
-    restart: always
-    cap_add:
-      - SYS_PTRACE
-      - SYS_ADMIN
-    security_opt:
-      - apparmor:unconfined
-    volumes:
-      - netdataconfig:/etc/netdata
-      - netdatalib:/var/lib/netdata
-      - netdatacache:/var/cache/netdata
-      - /proc:/host/proc:ro
-      - /sys:/host/sys:ro
-      - /etc/os-release:/host/etc/os-release:ro
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-
-volumes:
-  netdataconfig:
-  netdatalib:
-  netdatacache:
 
 networks:
   infra:
