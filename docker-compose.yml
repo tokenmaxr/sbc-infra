@@ -43,6 +43,40 @@ services:
     networks:
       - infra
 
+  open-webui:
+    image: ghcr.io/open-webui/open-webui:main
+    container_name: open-webui
+    restart: unless-stopped
+    user: "0:0"
+    ports:
+      - 3000:8080
+    volumes:
+      - open-webui-data:/app/backend/data
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      - OPENAI_API_BASE_URL=https://api.deepseek.com/v1
+      - OPENAI_API_KEY=${DEEPSEEK_API_KEY}
+      - AUDIO_STT_ENGINE=openai
+      - AUDIO_STT_OPENAI_API_BASE_URL=https://api.groq.com/openai/v1
+      - AUDIO_STT_OPENAI_API_KEY=${GROQ_API_KEY}
+      - AUDIO_STT_MODEL=whisper-large-v3-turbo
+    pid: "host"
+    privileged: true
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - infra
+
+volumes:
+  open-webui-data:
+
 networks:
   infra:
     external: true
